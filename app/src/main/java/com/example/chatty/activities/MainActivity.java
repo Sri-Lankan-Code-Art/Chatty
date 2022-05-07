@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Base64;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.example.chatty.R;
@@ -32,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         preferenceManager = new PreferenceManager(getApplicationContext());
+//        Log.d("user name error" , preferenceManager.getString(Constants.KEY_NAME));
         loadUserDetails();
         getToken();
         setListeners();
@@ -39,9 +41,12 @@ public class MainActivity extends AppCompatActivity {
 
     private void setListeners(){
         binding.imageSignOut.setOnClickListener( v -> signOut());
+        binding.fabNewChat.setOnClickListener(v ->
+                startActivity(new Intent(getApplicationContext(),UsersActivity.class)));
     }
 
     private void loadUserDetails(){
+      //  Log.d("user name error" , preferenceManager.getString(Constants.KEY_NAME));
         binding.textName.setText(preferenceManager.getString(Constants.KEY_NAME));
         byte[] bytes = Base64.decode(preferenceManager.getString(Constants.KEY_IMAGE),Base64.DEFAULT);
         Bitmap bitmap = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
@@ -61,7 +66,6 @@ public class MainActivity extends AppCompatActivity {
                 preferenceManager.getString(Constants.KEY_USER_ID)
         );
         documentReference.update(Constants.KEY_FCM_TOKEN,token)
-                .addOnSuccessListener(unused -> showToast("Token updated successfully"))
                 .addOnFailureListener(e -> showToast("Unable to update token"));
     }
 
